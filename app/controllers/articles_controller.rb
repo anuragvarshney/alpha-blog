@@ -1,5 +1,5 @@
 class ArticlesController < ApplicationController
-    
+    skip_before_action :verify_authenticity_token
     # def show
     #     begin
     #         @article = Article.find(id: params[:id])
@@ -21,5 +21,22 @@ class ArticlesController < ApplicationController
             else
                 render json: @article
             end
+        end
+
+        def create
+            40.times { print "-" }
+            puts "Params received: #{article_params.inspect}"
+            @article = Article.new(article_params)
+            if @article.save
+                render json: @article, status: :created
+            else
+                render json: { errors: @article.errors.full_messages }, status: :unprocessable_entity
+            end
+        end
+
+        private
+
+        def article_params
+            params.require(:article).permit(:title, :description)
         end
 end
