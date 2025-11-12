@@ -1,13 +1,7 @@
 class ArticlesController < ApplicationController
     skip_before_action :verify_authenticity_token
-    # def show
-    #     begin
-    #         @article = Article.find(id: params[:id])
-    #         render json: @article, status: :ok
-    #     rescue ActiveRecord::RecordNotFound
-    #       render json: { error: "Article not found" }, status: :not_found
-    #     end
-    # end
+    before_action :set_article, only: [ :show, :update, :destroy ]
+    rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
     def index
         @articles = Article.all
@@ -15,26 +9,19 @@ class ArticlesController < ApplicationController
     end
 
     def show
-        @article = Article.find_by(id: params[:id])
-        if @article.nil?
-            render json: { error: "Article not found for #{params[:id]}" }
-        else
-            render json: @article
-        end
+        render json: @article
     end
 
     def create
         @article = Article.new(article_params)
-            if @article.save
-                render json: @article, status: :created
-            else
-                render json: { errors: @article.errors.full_messages }, status: :unprocessable_entity
-            end
+        if @article.save
+            render json: @article, status: :created
+        else
+            render json: { errors: @article.errors.full_messages }, status: :unprocessable_entity
+        end
     end
 
     def update
-        @article = Article.find_by(id: params[:id])
-        return render json: { errors: "Article not found" } if @article.nil?
         if @article.update(article_params)
             render json: @article, status: :ok
         else
@@ -43,13 +30,24 @@ class ArticlesController < ApplicationController
     end
 
     def destroy
-        @article = Article.find_by(id: params[:id])
-        return render json: { errors: "Article not found" } if @article.nil?
         @article.destroy
         render json: { message: "Article deleted successfully" }, status: :ok
     end
 
     private
+
+    def set_article
+        @article = Article.find(params[:id])
+    end
+
+    def record_not_found
+        message = case action_name
+        when "update" then "Cannot update: Article not found with id #{params[:id]}"
+        when "destroy" then "Cannot delete: Article not found with id #{params[:id]}"
+        else "Article not found with id #{params[:id]}"
+        end
+        render json: { error: message }, status: :not_found
+     end
 
     def article_params
         params.require(:article).permit(:title, :description)
