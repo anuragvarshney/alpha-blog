@@ -9,6 +9,11 @@ class ArticlesController < ApplicationController
     #     end
     # end
 
+    def index
+        @articles = Article.all
+        render json: @articles
+    end
+
     def show
             @article = Article.find_by(id: params[:id])
             if @article.nil?
