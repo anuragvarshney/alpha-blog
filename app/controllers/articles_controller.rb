@@ -42,6 +42,13 @@ class ArticlesController < ApplicationController
         end
     end
 
+    def destroy
+        @article = Article.find_by(id: params[:id])
+        return render json: { errors: "Article not found" } if @article.nil?
+        @article.destroy
+        render json: { message: "Article deleted successfully" }, status: :ok
+    end
+
     private
 
     def article_params
