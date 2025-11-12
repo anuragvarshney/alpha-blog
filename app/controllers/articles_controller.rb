@@ -32,6 +32,16 @@ class ArticlesController < ApplicationController
             end
     end
 
+    def update
+        @article = Article.find_by(id: params[:id])
+        return render json: { errors: "Article not found" } if @article.nil?
+        if @article.update(article_params)
+            render json: @article, status: :ok
+        else
+            render json: { errors: @article.errors.full_messages }, status: :unprocessable_entity
+        end
+    end
+
     private
 
     def article_params
