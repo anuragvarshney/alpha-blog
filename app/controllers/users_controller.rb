@@ -54,7 +54,8 @@ class UsersController < ApplicationController
 
     def destroy
       @user.destroy
-      head :no_content
+      @current_user = nil
+      render json: { message: "User deleted successfully" }, status: :ok
     end
 
     private
