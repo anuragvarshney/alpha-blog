@@ -22,7 +22,8 @@ class UsersController < ApplicationController
     # this is especially beneficial when dealing with a large number of users and their associated articles.
     # example : with includes, fetching 10 users and their articles would typically result in just 2 queries: one for the users and one for all their articles, significantly reducing the total number of queries executed.
     def index
-      @users = User.includes(:articles).all
+      per_page = (params[:per_page].presence&.to_i || 10).clamp(1, 50)
+      @users = User.includes(:articles).paginate(page: params[:page], per_page: per_page)
       render json: @users.as_json(
         except: [ :password_digest ],
         include: :articles

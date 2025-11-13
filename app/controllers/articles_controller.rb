@@ -4,7 +4,8 @@ class ArticlesController < ApplicationController
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
     def index
-        @articles = Article.includes(:user).all
+        per_page = (params[:per_page].presence&.to_i || 10).clamp(1, 50)
+        @articles = Article.paginate(page: params[:page], per_page: per_page).includes(:user)
         render json: @articles.as_json(
             include: {
                 user: { except: [ :password_digest ] }
