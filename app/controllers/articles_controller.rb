@@ -4,12 +4,8 @@ class ArticlesController < ApplicationController
 
     def index
         per_page = (params[:per_page].presence&.to_i || 10).clamp(1, 50)
-        @articles = Article.paginate(page: params[:page], per_page: per_page).includes(:user)
-        render json: @articles.as_json(
-            include: {
-                user: { except: [ :password_digest ] }
-            }
-        )
+        @articles = Article.paginate(page: params[:page], per_page: per_page)
+        render json: @articles
     end
 
     def show
@@ -18,6 +14,7 @@ class ArticlesController < ApplicationController
 
     def create
         @article = Article.new(article_params)
+        @article.user = current_user
         if @article.save
             render json: @article, status: :created
         else
