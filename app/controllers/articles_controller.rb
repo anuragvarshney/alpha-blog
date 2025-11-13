@@ -4,8 +4,12 @@ class ArticlesController < ApplicationController
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
     def index
-        @articles = Article.all
-        render json: @articles
+        @articles = Article.includes(:user).all
+        render json: @articles.as_json(
+            include: {
+                user: { except: [ :password_digest ] }
+            }
+        )
     end
 
     def show

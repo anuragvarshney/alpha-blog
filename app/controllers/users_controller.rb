@@ -5,7 +5,7 @@ class UsersController < ApplicationController
     # this is the old index method without articles included this has n+1 query problem
     # n+1 query problem occurs when an application needs to load related data for multiple records, resulting in one query to fetch the main records and additional queries for each related record.
     # example: if we have 10 users and each user has articles, the old index method would execute 1 query to fetch all users and then 10 additional queries (one for each user) to fetch their articles, resulting in a total of 11 queries.
-    # to solve this n+1 query problem we use includes method to eager load the articles along with users in a single query. 
+    # to solve this n+1 query problem we use includes method to eager load the articles along with users in a single query.
     # def index
     #   @users = User.all
     #   render json: @users.as_json(
@@ -18,7 +18,7 @@ class UsersController < ApplicationController
 
     # updated index method to include articles and avoid n+1 query problem
     # here we use includes(:articles) to eager load articles associated with users, reducing the number of database queries and improving performance.
-    # this way, when we access the articles for each user, they are already loaded in memory, avoiding additional queries.  
+    # this way, when we access the articles for each user, they are already loaded in memory, avoiding additional queries.
     # this is especially beneficial when dealing with a large number of users and their associated articles.
     # example : with includes, fetching 10 users and their articles would typically result in just 2 queries: one for the users and one for all their articles, significantly reducing the total number of queries executed.
     def index
