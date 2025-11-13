@@ -3,4 +3,5 @@ class User < ApplicationRecord
     validates :email, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 105 }, format: { with: URI::MailTo::EMAIL_REGEXP }
     has_many :articles
     before_save { self.email = email.downcase }
+    has_secure_password
 end
