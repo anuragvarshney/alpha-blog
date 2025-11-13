@@ -1,5 +1,4 @@
 class ArticlesController < ApplicationController
-    skip_before_action :verify_authenticity_token
     before_action :set_article, only: [ :show, :update, :destroy ]
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 

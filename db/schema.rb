@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_133334) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_13_064127) do
   create_table "articles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -21,11 +21,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_133334) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "auth_token"
     t.datetime "created_at", null: false
     t.string "email"
     t.string "password_digest"
     t.datetime "updated_at", null: false
     t.string "username"
+    t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
   end
 
   add_foreign_key "articles", "users"
