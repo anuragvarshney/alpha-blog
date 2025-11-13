@@ -10,7 +10,9 @@ class ArticlesController < ApplicationController
     end
 
     def show
-        render json: @article
+        render json: @article.as_json(
+            include: { categories: { only: [ :id, :name ] } }
+        )
     end
 
     def create
