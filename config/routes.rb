@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   post "signup", to: "authentication#signup"
   post "login", to: "authentication#login"
   delete "logout", to: "authentication#logout"
+  resources :categories
 end
