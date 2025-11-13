@@ -3,6 +3,14 @@ class ApplicationController < ActionController::API
 
     before_action :authenticate
 
+    def require_admin
+        render json: { error: "Admin privileges required" }, status: :forbidden unless current_user&.admin?
+    end
+
+    def required_admin_or_self(user)
+        render json: { error: "Admin privileges or ownership required" }, status: :forbidden unless current_user&.admin? || current_user == user
+    end
+
     private
 
     def authenticate

@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
     before_action :set_user, only: [ :show, :update, :destroy ]
-    before_action :require_same_user, only: [ :update, :destroy ]
+    before_action :require_admin, only: [ :index ]
+    before_action -> { required_admin_or_self(@user) }, only: [ :show, :update, :destroy ]
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
     # this is the old index method without articles included this has n+1 query problem
@@ -71,11 +72,5 @@ class UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:username, :email)
-    end
-
-    def require_same_user
-      if @cureent_user != @user
-        render json: { error: "You can not delete other users" }, status: :forbidden
-      end
     end
 end

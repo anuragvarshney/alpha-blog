@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController
     before_action :set_article, only: [ :show, :update, :destroy ]
-    before_action :require_same_user, only: [ :update, :destroy ]
+    before_action :authorize_article_owner, only: [ :update, :destroy ]
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
     def index
@@ -55,9 +55,9 @@ class ArticlesController < ApplicationController
         params.require(:article).permit(:title, :description)
     end
 
-    def require_same_user
-        if current_user != @article.user
-            render json: { error: "You can only update or delete your own articles" }, status: :forbidden
+    def authorize_article_owner
+        unless current_user.admin? || @article.user == current_user
+            render json: { error: "You are not authorized to perform this action." }, status: :forbidden
         end
     end
 end
